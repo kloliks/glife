@@ -86,7 +86,7 @@ namespace {
 
 		// print Header
 		file << "┌─";
-		for( int i = 0; i < m[0].size(); ++i ){
+		for( int i = 0; i < m[0].size()-1; ++i ){
 			file << "──";
 		}
 		file << "┐\n";
@@ -94,22 +94,18 @@ namespace {
 
 		// print Frame
 		for( int i = 0; i < m.size(); i++ ){
-			file << "│ ";
-			for( int j = 0; j < m[i].size(); j++ ){
-				if( m[i][j].is_live ){
-					file << '*';
-				}
-				else {
-					file << ' ';
-				}
+			file << "│";
+			for( int j = 0; j < m[i].size()-1; j++ ){
+				file << (m[i][j].is_live ? '*' : ' ');
 				file << ' ';
 			}
+			file << (m[i][m[i].size()-1].is_live ? '*' : ' ');
 			file << "│\n";
 		}
 
 		// print Footer
 		file << "└─";
-		for( int i = 0; i < m[0].size(); ++i ){
+		for( int i = 0; i < m[0].size()-1; ++i ){
 			file << "──";
 		}
 		file << "┘\n";
