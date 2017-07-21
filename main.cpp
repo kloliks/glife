@@ -28,8 +28,8 @@ using std::cin;
 using std::cerr;
 using std::cout;
 using std::endl;
-using std::ofstream;
-using std::ios_base;
+
+using std::ostream;
 
 
 // Побитовая структура для хранения состояние клетки
@@ -53,7 +53,7 @@ struct Point {
 };
 
 std::ostream& operator<< (std::ostream& os, const Cell& c) {
-  return os << c.is_live;
+	return os << c.is_live;
 }
 
 typedef vector< vector<Cell> > Matrix;
@@ -67,7 +67,7 @@ namespace {
 		int y0 = (y-1 >= 0) ? (y-1) : 0;
 
 		int xN = (x+1 < m.size()) ? (x+1) : m.size()-1;
-		int yN = (y+1 < m.size()) ? (y+1) : m.size()-1;
+		int yN = (y+1 < m[0].size()) ? (y+1) : m[0].size()-1;
 
 		for( int _x = x0; _x <= xN; ++_x ){
 			for( int _y = y0; _y <= yN; ++_y ){
@@ -80,37 +80,34 @@ namespace {
 		return nb;
 	}
 
-  // Вывести на экран игровое поле
-	void print_world(const Matrix& m) {
-		auto& file = cout;
-
+	// Вывести игровое поле
+	ostream& operator<< (ostream& os, const Matrix& m) {
 		// print Header
-		file << "┌─";
-		for( int i = 0; i < m[0].size()-1; ++i ){
-			file << "──";
+		os << "┌─";
+		for( int i = 0; i < m[0].size(); ++i ){
+			os << "──";
 		}
-		file << "┐\n";
-//		file << "│ " << string(m[0].size()*2, ' ') << "│\n";
+		os << "┐\n";
 
 		// print Frame
 		for( int i = 0; i < m.size(); i++ ){
-			file << "│";
-			for( int j = 0; j < m[i].size()-1; j++ ){
-				file << (m[i][j].is_live ? '*' : ' ');
-				file << ' ';
+			os << "│ ";
+			for( int j = 0; j < m[i].size(); j++ ){
+				os << (m[i][j].is_live ? '*' : ' ');
+				os << ' ';
 			}
-			file << (m[i][m[i].size()-1].is_live ? '*' : ' ');
-			file << "│\n";
+			os << "│\n";
 		}
 
 		// print Footer
-		file << "└─";
-		for( int i = 0; i < m[0].size()-1; ++i ){
-			file << "──";
+		os << "└─";
+		for( int i = 0; i < m[0].size(); ++i ){
+			os << "──";
 		}
-		file << "┘\n";
-	}
+		os << "┘\n";
 
+		return os;
+	}
 }
 
 /*
@@ -209,7 +206,7 @@ int main() {
 	Matrix m;
 	m.resize(11);
 	for( auto& r : m ){
-		r.resize(11);
+		r.resize(15);
 	}
 
 	auto ng = neighbors(m, 0, 0);
@@ -234,7 +231,8 @@ int main() {
 		m[n.x][n.y].is_live = true;
 	}
 
-	print_world(m);
+	cout << m;
+//	print_world(m, cout);
 //  my::Matrix<Cell,__WORLD_WIDTH__,__WORLD_HEIGHT__> world;
 //  my::Matrix<Cell, world.row, world.col> prev_world;
 //
@@ -264,7 +262,7 @@ int main() {
 //		boost::this_thread::sleep(boost::posix_time::milliseconds(1));
 //	} while (live_points != 0 && !is_optimal);
 
-	cout << "DONE" << endl;
+	cerr << "DONE" << endl;
 
-  return 0;
+	return 0;
 }
